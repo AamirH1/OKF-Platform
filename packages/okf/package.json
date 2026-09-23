@@ -1,0 +1,21 @@
+{
+  "name": "@okf/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "OKF engine: parsing, validation, schema extraction, profiling, diffing",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "mdast-util-to-string": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.1.0",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.4"
+  }
+}
