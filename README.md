@@ -117,6 +117,7 @@ All configuration options are documented in [`.env.example`](.env.example).
 | [Architecture](docs/architecture.md) | How the pieces fit together, plus [decision records](docs/decisions/) |
 | [API](docs/api.md) | Endpoints, authentication, examples ([OpenAPI](docs/openapi.yaml)) |
 | [Security](docs/security.md) | Threat model and controls |
+| [Free hosting guide](host.md) | Step-by-step: run it online for $0 (Oracle Cloud + Cloudflare Tunnel) |
 | [Deployment](docs/deployment.md) | Docker, production and Google Cloud setup |
 | [Database](docs/database.md) | Schema and migrations |
 
