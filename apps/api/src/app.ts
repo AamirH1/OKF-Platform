@@ -42,7 +42,6 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       const h = req.headers['x-request-id'];
       return typeof h === 'string' && REQUEST_ID.test(h) ? h : randomUUID();
     },
-    requestIdLogLabel: 'requestId',
   }).withTypeProvider<ZodTypeProvider>();
 
   app.setValidatorCompiler(validatorCompiler);
