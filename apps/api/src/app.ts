@@ -5,7 +5,7 @@ import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import swagger from '@fastify/swagger';
 import Fastify, { type FastifyInstance } from 'fastify';
-import { jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod';
+import { jsonSchemaTransform, jsonSchemaTransformObject, serializerCompiler, validatorCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod';
 import { sql } from '@okf/db';
 import type { AppDeps } from './deps';
 import { registerErrorHandler } from './lib/errors';
@@ -43,7 +43,6 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       return typeof h === 'string' && REQUEST_ID.test(h) ? h : randomUUID();
     },
     requestIdLogLabel: 'requestId',
-    disableRequestLogging: env.NODE_ENV === 'test',
   }).withTypeProvider<ZodTypeProvider>();
 
   app.setValidatorCompiler(validatorCompiler);
@@ -111,6 +110,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       security: [{ bearerAuth: [] }, { cookieAuth: [], csrfToken: [] }],
     },
     transform: jsonSchemaTransform,
+    transformObject: jsonSchemaTransformObject,
   });
 
   app.get('/health', { schema: { hide: true } }, async () => ({ status: 'ok' }));
