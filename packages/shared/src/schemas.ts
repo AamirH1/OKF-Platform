@@ -3,10 +3,13 @@ import { API_KEY_SCOPES, GRANT_ROLES, ORG_ROLES, VISIBILITIES } from './permissi
 
 /** Request schemas shared by the API (enforcement) and the web app (form validation). */
 
-export const emailSchema = z.email().max(254).transform((e) => e.trim().toLowerCase());
+export const emailSchema = z
+  .email('Enter a valid email address')
+  .max(254, 'Email is too long')
+  .transform((e) => e.trim().toLowerCase());
 /** NIST 800-63B: length over composition rules; 12+ characters, bounded to keep hashing cheap. */
 export const passwordSchema = z.string().min(12, 'Use at least 12 characters').max(256);
-const name = z.string().trim().min(1).max(120);
+const name = z.string().trim().min(1, 'Required').max(120, 'Use at most 120 characters');
 export const slugSchema = z
   .string()
   .trim()
@@ -16,7 +19,7 @@ export const slugSchema = z
 const uuid = z.uuid();
 
 export const signupSchema = z.object({ email: emailSchema, password: passwordSchema, name });
-export const loginSchema = z.object({ email: emailSchema, password: z.string().min(1).max(256) });
+export const loginSchema = z.object({ email: emailSchema, password: z.string().min(1, 'Enter your password').max(256) });
 export const forgotPasswordSchema = z.object({ email: emailSchema });
 export const resetPasswordSchema = z.object({ token: z.string().min(20).max(200), password: passwordSchema });
 export const updateProfileSchema = z.object({ name });

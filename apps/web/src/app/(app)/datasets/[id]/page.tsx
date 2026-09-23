@@ -185,7 +185,9 @@ export default function OverviewPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Concept types</CardTitle>
-                  <CardDescription>OKF `type` values (free vocabulary).</CardDescription>
+                  <CardDescription>
+                    OKF <code>type</code> values (free vocabulary).
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Bars items={p.types.slice(0, 8).map((t) => ({ label: t.value, value: t.count }))} total={p.conceptCount} />
@@ -194,7 +196,9 @@ export default function OverviewPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Trust & lifecycle</CardTitle>
-                  <CardDescription>Derived from `verified`, `status`, `stale_after` (OKF §5).</CardDescription>
+                  <CardDescription>
+                    Derived from <code>verified</code>, <code>status</code>, <code>stale_after</code> (OKF §5).
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Bars

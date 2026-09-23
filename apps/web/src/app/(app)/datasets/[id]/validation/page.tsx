@@ -122,6 +122,13 @@ export default function ValidationPage() {
               </TR>
             </THead>
             <TBody>
+              {r.issues.data.length === 0 ? (
+                <TR>
+                  <TD colSpan={4} className="py-6 text-center text-muted-foreground">
+                    No issues match these filters.
+                  </TD>
+                </TR>
+              ) : null}
               {r.issues.data.map((i, idx) => {
                 const Icon = SEVERITY_ICON[i.severity];
                 return (
