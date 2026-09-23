@@ -233,6 +233,8 @@ export const datasetVersions = pgTable(
     profile: jsonb('profile'),
     fieldSchema: jsonb('field_schema'),
     metadata: jsonb('metadata'),
+    /** Text indexed for catalog search when this version is the dataset's visible version. */
+    searchText: text('search_text'),
     failure: jsonb('failure'),
     createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
     createdAt: created(),

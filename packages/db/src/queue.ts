@@ -43,7 +43,9 @@ export async function enqueueJob(ex: Executor, input: EnqueueInput): Promise<Job
       payload: input.payload ?? {},
       createdBy: input.createdBy ?? null,
       maxAttempts: input.maxAttempts ?? 3,
-      runAfter: input.runAfter ?? new Date(),
+      // Default to the database clock: comparing an app-clock timestamp against the
+      // database's now() when claiming breaks under clock skew between hosts.
+      ...(input.runAfter ? { runAfter: input.runAfter } : {}),
     })
     .returning();
   return job!;
@@ -117,7 +119,7 @@ export async function failJob(ex: Executor, job: Pick<Job, 'id' | 'attempts' | '
     .update(jobs)
     .set(
       retry
-        ? { status: 'QUEUED', error, lockedBy: null, lockedAt: null, runAfter: new Date(Date.now() + backoffMs(job.attempts)) }
+        ? { status: 'QUEUED', error, lockedBy: null, lockedAt: null, runAfter: sql`now() + make_interval(secs => ${backoffMs(job.attempts) / 1000})` }
         : { status: 'FAILED', error, lockedBy: null, lockedAt: null, finishedAt: sql`now()` },
     )
     .where(and(eq(jobs.id, job.id), eq(jobs.lockedBy, workerId)))

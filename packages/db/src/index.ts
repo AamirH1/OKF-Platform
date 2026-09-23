@@ -1,6 +1,7 @@
 export * from './schema';
 export * from './client';
 export * from './queue';
+export * from './domain';
 export { runMigrations, MIGRATIONS_DIR } from './migrate';
 export {
   and,

@@ -80,6 +80,7 @@ export const envSchema = z.object({
   WORKER_TEMP_DIR: z.string().default(''),
   WORKER_HEARTBEAT_MS: int(5_000),
   WORKER_STALE_AFTER_MS: int(60_000),
+  WORKER_HTTP_PORT: int(4100),
 
   RATE_LIMIT_MAX: int(300),
   RATE_LIMIT_WINDOW_MS: int(60_000),
