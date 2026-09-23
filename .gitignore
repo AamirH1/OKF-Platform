@@ -1,18 +1,25 @@
+# dependencies and builds
 node_modules/
 dist/
 .next/
 out/
-coverage/
+.turbo/
 *.tsbuildinfo
+
+# test output
+coverage/
+playwright-report/
+test-results/
+tests/fixtures/okf/generated/
+
+# local data and caches
+.data/
+.cache/
+*.log
+.DS_Store
+
+# secrets (the example file is committed)
 .env
 .env.local
 .env.*.local
 !.env.example
-.DS_Store
-.turbo/
-playwright-report/
-test-results/
-.data/
-.cache/
-*.log
-tests/fixtures/okf/generated/
