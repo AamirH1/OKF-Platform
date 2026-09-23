@@ -1,0 +1,6 @@
+The `acme_retail/` and `stackoverflow/` bundles are copied unmodified (except for the
+removal of the generated `viz.html` files) from
+https://github.com/GoogleCloudPlatform/open-knowledge-format/tree/ad30107c31c06aec8a7d5636e0d1058118604e6f/bundles
+Copyright 2026 Google LLC, licensed under the Apache License 2.0 (see LICENSE-okf-samples.md).
+
+All other fixtures in this directory were written for this project.
