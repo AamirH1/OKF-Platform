@@ -248,6 +248,37 @@ describe('ingestion failure modes', () => {
   });
 });
 
+describe('deletion', () => {
+  it('soft-deletes immediately and purges rows and stored objects in the background', async () => {
+    const owner = new TestClient(h.app);
+    await owner.signup('owner@example.com');
+    const { orgId, datasetId } = await orgWithDataset(owner);
+    await uploadFile(owner, datasetId, await packFixture(h.tmp, 'valid-minimal'));
+    await h.drainJobs();
+    await owner.post(`/api/v1/datasets/${datasetId}/publish`, {});
+    const { datasetVersions, eq, datasets } = await import('@okf/db');
+    const [v] = await h.deps.db.select().from(datasetVersions).where(eq(datasetVersions.datasetId, datasetId));
+    expect(await h.deps.storage.head(v!.archiveKey)).not.toBeNull();
+
+    expect((await owner.delete(`/api/v1/datasets/${datasetId}`)).statusCode).toBe(204);
+    expect((await owner.get(`/api/v1/datasets/${datasetId}`)).statusCode).toBe(404);
+    expect(await h.drainJobs()).toBe(1);
+    expect(await h.deps.db.select().from(datasets).where(eq(datasets.id, datasetId))).toEqual([]);
+    expect(await h.deps.storage.head(v!.archiveKey)).toBeNull();
+    const { storageKeys } = await import('@okf/storage');
+    expect(await h.deps.storage.head(storageKeys.analytics(orgId, v!.id, 'concepts'))).toBeNull();
+  });
+
+  it('queues purges for every dataset when an organization is deleted', async () => {
+    const owner = new TestClient(h.app);
+    await owner.signup('owner@example.com');
+    const { orgId } = await orgWithDataset(owner);
+    await owner.post('/api/v1/datasets', { organizationId: orgId, name: 'Second' });
+    expect((await owner.delete(`/api/v1/organizations/${orgId}`)).statusCode).toBe(204);
+    expect(await h.drainJobs()).toBe(2);
+  });
+});
+
 describe('platform endpoints', () => {
   it('serves health, readiness, metrics and the OpenAPI document', async () => {
     const c = new TestClient(h.app);

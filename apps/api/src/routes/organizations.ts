@@ -4,6 +4,7 @@ import {
   asc,
   count,
   datasets,
+  enqueueJob,
   eq,
   gt,
   invitations,
@@ -131,7 +132,15 @@ const routes: RoutePlugin = async (app, { deps }) => {
       await deps.db.transaction(async (tx) => {
         const now = new Date();
         await tx.update(organizations).set({ deletedAt: now, slug: sql`${organizations.slug} || '-deleted-' || extract(epoch from now())::bigint` }).where(eq(organizations.id, req.params.id));
-        await tx.update(datasets).set({ deletedAt: now }).where(and(eq(datasets.organizationId, req.params.id), isNull(datasets.deletedAt)));
+        const removed = await tx
+          .update(datasets)
+          .set({ deletedAt: now, publishedVersionId: null })
+          .where(and(eq(datasets.organizationId, req.params.id), isNull(datasets.deletedAt)))
+          .returning({ id: datasets.id });
+        // Stored files and version data are removed asynchronously, one job per dataset.
+        for (const d of removed) {
+          await enqueueJob(tx, { type: 'purge_dataset', organizationId: req.params.id, datasetId: d.id, createdBy: req.auth.user?.id ?? null });
+        }
         await audit(tx, req, { action: 'org.deleted', organizationId: req.params.id, resourceType: 'organization', resourceId: req.params.id });
       });
       return reply.code(204).send(null);
