@@ -27,7 +27,7 @@
     "test:e2e": "playwright test",
     "db:generate": "npm run generate -w @okf/db",
     "db:migrate": "npm run migrate -w @okf/db",
-    "db:seed": "npm run seed -w @okf/db",
+    "db:seed": "node scripts/seed.mjs",
     "openapi": "npm run openapi -w @okf/api",
     "check": "bash scripts/check.sh",
     "fixtures:large": "node scripts/generate-large-fixture.mjs"
