@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["apps/api/src", "apps/api/test", "apps/api/scripts", "apps/worker/src", "apps/worker/test", "packages/*/src", "packages/*/test", "packages/*/scripts", "tests/e2e", "tests/setup","playwright.config.ts", "vitest.config.ts"]
+  "include": ["apps/api/src", "apps/api/test", "apps/api/scripts", "apps/worker/src", "apps/worker/test", "packages/*/src", "packages/*/test", "packages/*/scripts", "packages/*/*.config.ts","tests/e2e", "tests/setup","playwright.config.ts", "vitest.config.ts"]
 }
