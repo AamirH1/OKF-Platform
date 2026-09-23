@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -40,5 +41,16 @@ export default tseslint.config(
   {
     files: ['scripts/**', '**/scripts/**', 'tests/**', '**/test/**'],
     rules: { 'no-console': 'off' },
+  },
+  {
+    files: ['apps/web/**/*.{ts,tsx}'],
+    plugins: { 'react-hooks': reactHooks },
+    languageOptions: { globals: { ...globals.browser } },
+    rules: {
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      // Pages intentionally dispatch mutations from event handlers without awaiting them.
+      '@typescript-eslint/no-floating-promises': 'off',
+    },
   },
 );
