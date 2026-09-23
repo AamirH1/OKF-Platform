@@ -1,0 +1,8 @@
+node_modules
+dist
+.next
+coverage
+packages/db/migrations
+tests/fixtures
+docs/openapi.yaml
+package-lock.json

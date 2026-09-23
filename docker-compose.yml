@@ -1,0 +1,97 @@
+# Local development dependencies for OKF Platform.
+#   docker compose up -d                      # postgres, redis, minio, mailpit
+#   docker compose --profile security up -d   # + ClamAV malware scanning (~1 GB RAM)
+name: okf-platform
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: okf
+      POSTGRES_PASSWORD: okf
+      POSTGRES_DB: okf
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/docker/postgres-init.sql:/docker-entrypoint-initdb.d/10-init.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U okf -d okf']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:8-alpine
+    command: ['redis-server', '--appendonly', 'yes']
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  minio:
+    # Docker Hub minio/minio images are no longer published; quay.io is the upstream registry.
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: ['server', '/data', '--console-address', ':9001']
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY_ID:-okfminio}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_ACCESS_KEY:-okfminio-secret}
+      MINIO_API_CORS_ALLOW_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+    ports:
+      - '${MINIO_PORT:-9000}:9000'
+      - '${MINIO_CONSOLE_PORT:-9001}:9001'
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ['CMD', 'mc', 'ready', 'local']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  minio-init:
+    image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-okfminio}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-okfminio-secret}
+      S3_BUCKET: ${S3_BUCKET:-okf-datasets}
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        set -e
+        mc alias set local http://minio:9000 "$$S3_ACCESS_KEY_ID" "$$S3_SECRET_ACCESS_KEY"
+        mc mb --ignore-existing "local/$$S3_BUCKET"
+        mc mb --ignore-existing "local/$$S3_BUCKET-test"
+        mc anonymous set none "local/$$S3_BUCKET"
+        echo "buckets ready"
+    restart: 'no'
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - '${SMTP_PORT:-1025}:1025'
+      - '${MAILPIT_UI_PORT:-8025}:8025'
+
+  clamav:
+    image: clamav/clamav-debian:stable
+    profiles: ['security']
+    ports:
+      - '${CLAMAV_PORT:-3310}:3310'
+    healthcheck:
+      test: ['CMD', 'clamdcheck.sh']
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 300s
+
+volumes:
+  postgres-data:
+  redis-data:
+  minio-data:

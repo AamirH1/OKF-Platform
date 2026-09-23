@@ -1,0 +1,35 @@
+{
+  "name": "@okf/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/app.ts"
+  },
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=../../.env src/server.ts",
+    "start": "node dist/server.js",
+    "build": "node ../../scripts/bundle.mjs src/server.ts dist/server.js",
+    "openapi": "tsx --env-file-if-exists=../../.env scripts/generate-openapi.ts"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.1.2",
+    "@fastify/cors": "^11.3.0",
+    "@fastify/helmet": "^13.1.1",
+    "@fastify/rate-limit": "^11.2.0",
+    "@fastify/swagger": "^9.9.0",
+    "@node-rs/argon2": "^2.2.1",
+    "fastify": "^5.12.5",
+    "fastify-plugin": "^6.0.0",
+    "fastify-type-provider-zod": "^7.0.0",
+    "ioredis": "^5.11.1",
+    "nodemailer": "^10.0.10",
+    "pino": "^10.3.1",
+    "prom-client": "^15.1.3",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^8.0.2"
+  }
+}
