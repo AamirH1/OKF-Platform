@@ -21,7 +21,7 @@ export default function HowItWorksPage() {
           Turn a folder of knowledge into a <span className="okf-gradient-text">trusted, searchable catalog</span>.
         </h1>
         <p className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">
-          Teams write down what their data means — what each table holds, how a metric is calculated, who checked it — using <Term k="okf">OKF</Term>, a
+          Teams write down what their data means - what each table holds, how a metric is calculated, who checked it - using <Term k="okf">OKF</Term>, a
           simple open format of text files. Upload that folder here and we check it, organize it, and let you explore and share it safely.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
@@ -38,7 +38,7 @@ export default function HowItWorksPage() {
 
       <section>
         <h2 className="text-xl font-semibold tracking-tight">From upload to sharing in six steps</h2>
-        <p className="mt-1 text-sm text-muted-foreground">No setup needed — each step happens automatically or with one click.</p>
+        <p className="mt-1 text-sm text-muted-foreground">No setup needed - each step happens automatically or with one click.</p>
         <ol className="okf-stagger mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {STEPS.map((s, i) => {
             const Icon = ICONS[i]!;

@@ -7,7 +7,7 @@
 export const GLOSSARY = {
   okf: {
     term: 'OKF (Open Knowledge Format)',
-    text: 'An open, simple way to write down knowledge about data — what a table means, how a number is calculated, who checked it — as a folder of Markdown text files.',
+    text: 'An open, simple way to write down knowledge about data - what a table means, how a number is calculated, who checked it - as a folder of Markdown text files.',
   },
   bundle: {
     term: 'Bundle',
@@ -19,7 +19,7 @@ export const GLOSSARY = {
   },
   concept: {
     term: 'Concept',
-    text: 'One Markdown file in the bundle describing one thing — a table, a metric, a policy, a how-to guide. Think of it as one row in the dataset.',
+    text: 'One Markdown file in the bundle describing one thing - a table, a metric, a policy, a how-to guide. Think of it as one row in the dataset.',
   },
   version: {
     term: 'Version',
@@ -56,7 +56,7 @@ export type GlossaryKey = keyof typeof GLOSSARY;
 export const STEPS = [
   {
     title: 'Upload your bundle',
-    text: 'Drag a .zip or .tar.gz of your OKF folder onto the page. It goes straight to secure storage — large files are split into parts so a bad connection can resume.',
+    text: 'Drag a .zip or .tar.gz of your OKF folder onto the page. It goes straight to secure storage - large files are split into parts so a bad connection can resume.',
   },
   {
     title: 'We check it automatically',
@@ -86,10 +86,10 @@ export const TAB_TIPS: Record<TabKey, string> = {
   overview: 'A one-page summary of this dataset: how many concepts it has, what kinds, how trustworthy they are, and how they link together.',
   preview: 'Browse the concepts like rows in a spreadsheet. The statistics show, for each header field, how often it’s filled in and its most common values.',
   schema: 'Two views of structure: which header fields the concept files use, and the table columns the concepts document in their “# Schema” sections.',
-  metadata: 'Facts about the bundle itself — its OKF version, change log and every file we stored, with a fingerprint (SHA-256) to prove nothing changed.',
+  metadata: 'Facts about the bundle itself - its OKF version, change log and every file we stored, with a fingerprint (SHA-256) to prove nothing changed.',
   validation: 'Our automatic check. Red errors break the OKF rules and block publishing; yellow and blue items are friendly suggestions only.',
   versions: 'Every upload is saved as a new frozen version. Publish any checked version, or compare two to see what changed.',
   query: 'Ask questions about this dataset. Use the builder to filter and sort without code, or write SQL if you know it. Nothing here can change the data.',
-  activity: 'A history of what happened to this dataset and who did it — uploads, checks, publishing, sharing and queries.',
+  activity: 'A history of what happened to this dataset and who did it - uploads, checks, publishing, sharing and queries.',
   sharing: 'Decide who can see this dataset: only you, your organization, or everyone. You can also invite specific people or create a share link.',
 };
