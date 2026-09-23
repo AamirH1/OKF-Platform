@@ -1,0 +1,14 @@
+**/node_modules
+**/.next
+**/dist
+.git
+.env
+.env.*
+!.env.example
+.cache
+.data
+coverage
+playwright-report
+test-results
+tests/fixtures/okf/generated
+*.log

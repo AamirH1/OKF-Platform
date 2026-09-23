@@ -9,8 +9,9 @@
   },
   "scripts": {
     "generate": "drizzle-kit generate",
-    "migrate": "tsx --env-file-if-exists=../../.env src/migrate.ts",
-    "seed": "tsx --env-file-if-exists=../../.env scripts/seed.ts"
+    "migrate": "tsx --env-file-if-exists=../../.env src/migrate-cli.ts",
+    "seed": "tsx --env-file-if-exists=../../.env scripts/seed.ts",
+    "build": "node ../../scripts/bundle.mjs src/migrate-cli.ts dist/migrate.js"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.3",

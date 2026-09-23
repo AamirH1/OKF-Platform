@@ -1,0 +1,116 @@
+# Single-host production-style deployment (see docs/deployment.md).
+#   cp .env.example .env.production   # set real secrets; S3_* for your object store
+#   docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
+# Secrets are required (${VAR:?}) — nothing here has a usable default password.
+name: okf-platform-prod
+
+x-app-env: &app-env
+  NODE_ENV: production
+  LOG_LEVEL: ${LOG_LEVEL:-info}
+  WEB_ORIGIN: ${WEB_ORIGIN:?set WEB_ORIGIN, e.g. https://okf.example.com}
+  TRUST_PROXY: ${TRUST_PROXY:-true}
+  DATABASE_URL: postgres://okf:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/okf
+  REDIS_URL: redis://:${REDIS_PASSWORD:?set REDIS_PASSWORD}@redis:6379
+  S3_ENDPOINT: ${S3_ENDPOINT:-http://minio:9000}
+  S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT:?set S3_PUBLIC_ENDPOINT, the URL browsers use for uploads}
+  S3_REGION: ${S3_REGION:-us-east-1}
+  S3_BUCKET: ${S3_BUCKET:-okf-datasets}
+  S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:?set S3_ACCESS_KEY_ID}
+  S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:?set S3_SECRET_ACCESS_KEY}
+  S3_FORCE_PATH_STYLE: ${S3_FORCE_PATH_STYLE:-true}
+  SMTP_URL: ${SMTP_URL:?set SMTP_URL}
+  MAIL_FROM: ${MAIL_FROM:-OKF Platform <no-reply@example.com>}
+  MALWARE_SCANNER: ${MALWARE_SCANNER:-clamav}
+  CLAMAV_HOST: clamav
+  METRICS_TOKEN: ${METRICS_TOKEN:-}
+  IMPORT_ALLOWED_HOSTS: ${IMPORT_ALLOWED_HOSTS:-}
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: okf
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: okf
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck: { test: ['CMD-SHELL', 'pg_isready -U okf -d okf'], interval: 5s, timeout: 3s, retries: 30 }
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    command: ['redis-server', '--requirepass', '${REDIS_PASSWORD:?set REDIS_PASSWORD}', '--appendonly', 'yes']
+    volumes: [redis-data:/data]
+    restart: unless-stopped
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: ['server', '/data', '--console-address', ':9001']
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY_ID:?set S3_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_ACCESS_KEY:?set S3_SECRET_ACCESS_KEY}
+      MINIO_API_CORS_ALLOW_ORIGIN: ${WEB_ORIGIN}
+    volumes: [minio-data:/data]
+    ports: ['9000:9000'] # browsers upload here directly; put TLS in front in real deployments
+    healthcheck: { test: ['CMD', 'mc', 'ready', 'local'], interval: 5s, timeout: 3s, retries: 30 }
+    restart: unless-stopped
+
+  minio-init:
+    image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
+    depends_on: { minio: { condition: service_healthy } }
+    environment: { S3_ACCESS_KEY_ID: '${S3_ACCESS_KEY_ID}', S3_SECRET_ACCESS_KEY: '${S3_SECRET_ACCESS_KEY}', S3_BUCKET: '${S3_BUCKET:-okf-datasets}' }
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        set -e
+        mc alias set local http://minio:9000 "$$S3_ACCESS_KEY_ID" "$$S3_SECRET_ACCESS_KEY"
+        mc mb --ignore-existing "local/$$S3_BUCKET"
+        mc anonymous set none "local/$$S3_BUCKET"
+        mc version enable "local/$$S3_BUCKET"
+    restart: 'no'
+
+  clamav:
+    image: clamav/clamav-debian:stable
+    restart: unless-stopped
+
+  migrate:
+    build: { context: ., target: api }
+    image: okf-api
+    command: ['node', 'dist/migrate.js']
+    environment: *app-env
+    depends_on: { postgres: { condition: service_healthy } }
+    restart: 'no'
+
+  api:
+    image: okf-api
+    environment: *app-env
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_started }
+      minio-init: { condition: service_completed_successfully }
+    restart: unless-stopped
+
+  worker:
+    build: { context: ., target: worker }
+    image: okf-worker
+    environment: *app-env
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      minio-init: { condition: service_completed_successfully }
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      target: web
+      args:
+        API_INTERNAL_URL: http://api:4000
+        NEXT_PUBLIC_S3_ORIGIN: ${S3_PUBLIC_ENDPOINT}
+    image: okf-web
+    depends_on: [api]
+    ports: ['${WEB_PORT:-3000}:3000']
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  redis-data:
+  minio-data:
