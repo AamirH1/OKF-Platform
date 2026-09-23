@@ -23,3 +23,15 @@ tests/fixtures/okf/generated/
 .env.local
 .env.*.local
 !.env.example
+
+# AI assistants and editors (local only)
+.claude/
+.kilo/
+.kilocode/
+.cursor/
+CLAUDE.md
+AGENTS.md
+.vscode/
+.idea/
+*.swp
+*.swo
