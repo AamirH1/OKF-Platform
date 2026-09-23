@@ -1,5 +1,5 @@
 /**
- * All plain-language explanations shown in the UI live here, so the "How it works" page,
+ * All plain-language explanations shown in the UI live here, so the Home page,
  * the per-tab tips and the glossary hover-cards always say the same thing.
  * Write for someone who has never heard of OKF: short sentences, no jargon.
  */

@@ -1,6 +1,6 @@
 'use client';
 
-import { Building2, ChevronRight, ChevronsUpDown, HelpCircle, Database, KeyRound, LayoutDashboard, LibraryBig, LogOut, ScrollText, Search, Settings, Users } from 'lucide-react';
+import { Building2, ChevronRight, ChevronsUpDown, Home, Database, KeyRound, LayoutDashboard, LibraryBig, LogOut, ScrollText, Search, Settings, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
@@ -12,24 +12,26 @@ import { useCurrentOrg, useMe, useSignOut } from '@/lib/session';
 import { cn } from '@/lib/utils';
 
 const NAV = [
+  { href: '/home', label: 'Home', icon: Home, auth: false },
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, auth: true },
   { href: '/datasets', label: 'Datasets', icon: Database, auth: true },
   { href: '/catalog', label: 'Catalog', icon: LibraryBig, auth: false },
   { href: '/search', label: 'Search', icon: Search, auth: false },
   { href: '/organizations', label: 'Organizations', icon: Building2, auth: true },
-  { href: '/how-it-works', label: 'How it works', icon: HelpCircle, auth: false },
 ];
 
 const CRUMB_LABELS: Record<string, string> = {
   dashboard: 'Dashboard', datasets: 'Datasets', catalog: 'Catalog', search: 'Search', organizations: 'Organizations',
   settings: 'Settings', profile: 'Profile', members: 'Members', 'api-keys': 'API keys', 'audit-log': 'Audit log',
   new: 'New', preview: 'Data preview', schema: 'Schema', metadata: 'Metadata', validation: 'Validation', versions: 'Versions',
-  compare: 'Compare', query: 'Query', activity: 'Activity', sharing: 'Sharing', concepts: 'Concepts', 'how-it-works': 'How it works',
+  compare: 'Compare', query: 'Query', activity: 'Activity', sharing: 'Sharing', concepts: 'Concepts',
 };
 
 /** Breadcrumbs from the URL; IDs are shown as a short "…" item. */
 function Breadcrumbs() {
   const parts = usePathname().split('/').filter(Boolean);
+  // The Home page has its own hero title; no breadcrumb in the header there.
+  if (parts[0] === 'home') return null;
   return (
     <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground">
       {parts.map((p, i) => {
@@ -141,7 +143,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh">
       <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r bg-sidebar md:flex">
-        <Link href={signedIn ? '/dashboard' : '/catalog'} className="flex items-center gap-2 px-4 py-4">
+        <Link href={signedIn ? '/dashboard' : '/home'} className="flex items-center gap-2 px-4 py-4">
           <span className="okf-brand grid size-8 place-items-center rounded-lg text-sm font-bold text-white shadow-md">K</span>
           <span className="font-semibold tracking-tight">OKF Platform</span>
         </Link>
