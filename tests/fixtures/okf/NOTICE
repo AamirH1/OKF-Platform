@@ -1,5 +1,6 @@
-The `acme_retail/` and `stackoverflow/` bundles are copied unmodified (except for the
-removal of the generated `viz.html` files) from
+The `acme_retail/` and `stackoverflow/` bundles are copied from the source below, with two
+changes: the generated `viz.html` files were removed, and em dashes in
+`acme_retail/policies/revenue-recognition.md` were replaced with hyphens. Source:
 https://github.com/GoogleCloudPlatform/open-knowledge-format/tree/ad30107c31c06aec8a7d5636e0d1058118604e6f/bundles
 Copyright 2026 Google LLC, licensed under the Apache License 2.0 (see LICENSE-okf-samples.md).
 

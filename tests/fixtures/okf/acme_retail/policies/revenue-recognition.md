@@ -1,6 +1,6 @@
 ---
 type: Policy
-title: Acme Retail — Revenue Recognition Policy (FY2026)
+title: Acme Retail - Revenue Recognition Policy (FY2026)
 description: Finance policy defining when a customer order is recognized as revenue. Reviewed annually.
 resource: https://wiki.acme.internal/finance/revenue-recognition
 tags: [finance, policy, revenue]
@@ -11,7 +11,7 @@ status: stable
 stale_after: 2026-12-31T00:00:00Z
 ---
 
-# Acme Retail Revenue Recognition Policy — FY2026
+# Acme Retail Revenue Recognition Policy - FY2026
 
 **Owner:** VP Finance (jsmith@acme)
 **Effective:** 2026-01-01
@@ -43,8 +43,8 @@ Any Attested Computation whose `sources` cites this policy MUST implement the fo
 
 # Cited by
 
-- [`tables/orders`](/tables/orders.md) — `order_status`, `order_ts`, and `net_amount` columns implement the recognition rules
-- [`metrics/revenue`](/metrics/revenue.md) — the recognized-revenue definition derives from this policy
-- [`metrics/gross-margin`](/metrics/gross-margin.md) — the revenue side of gross margin follows this policy
-- [`computations/revenue-ytd`](/computations/revenue-ytd.md) — the sanctioned SQL implements all four rules
-- [`computations/gross-margin-period`](/computations/gross-margin-period.md) — revenue leg uses these recognition rules
+- [`tables/orders`](/tables/orders.md) - `order_status`, `order_ts`, and `net_amount` columns implement the recognition rules
+- [`metrics/revenue`](/metrics/revenue.md) - the recognized-revenue definition derives from this policy
+- [`metrics/gross-margin`](/metrics/gross-margin.md) - the revenue side of gross margin follows this policy
+- [`computations/revenue-ytd`](/computations/revenue-ytd.md) - the sanctioned SQL implements all four rules
+- [`computations/gross-margin-period`](/computations/gross-margin-period.md) - revenue leg uses these recognition rules
