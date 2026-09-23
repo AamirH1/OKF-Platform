@@ -25,6 +25,8 @@ const csp = [
 const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Hide the Next.js dev-tools badge ("N") in development.
+  devIndicators: false,
   output: 'standalone',
   transpilePackages: ['@okf/shared'],
   async rewrites() {

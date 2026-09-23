@@ -9,12 +9,12 @@ import { timeAgo } from '@/lib/utils';
 
 export function SearchResults({ results }: { results: Page<SearchHitDTO> }) {
   return (
-    <ul className="divide-y rounded-lg border" data-testid="search-results">
+    <ul className="okf-stagger space-y-2" data-testid="search-results">
       {results.data.map((h, i) => {
         const href = h.concept ? `/datasets/${h.dataset.id}/concepts/${h.concept.conceptId.split('/').map(encodeURIComponent).join('/')}` : `/datasets/${h.dataset.id}`;
         return (
           <li key={`${h.dataset.id}-${h.concept?.conceptId ?? ''}-${i}`}>
-            <Link href={href} className="flex gap-3 px-4 py-3 hover:bg-muted/40">
+            <Link href={href} className="okf-lift flex gap-3 rounded-lg border bg-card px-4 py-3">
               {h.concept ? <FileText className="mt-0.5 size-4 shrink-0 text-muted-foreground" /> : <Database className="mt-0.5 size-4 shrink-0 text-muted-foreground" />}
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">

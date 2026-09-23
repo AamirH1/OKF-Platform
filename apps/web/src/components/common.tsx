@@ -168,11 +168,36 @@ export function Highlighted({ text }: { text: string }) {
   );
 }
 
+/** Counts up to `value` (respects prefers-reduced-motion). */
+export function AnimatedNumber({ value }: { value: number }) {
+  const [shown, setShown] = React.useState(value);
+  const from = React.useRef(0);
+  React.useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setShown(value);
+      return;
+    }
+    const start = performance.now();
+    const origin = from.current;
+    let raf = 0;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - start) / 600);
+      const eased = 1 - (1 - p) ** 3;
+      setShown(Math.round(origin + (value - origin) * eased));
+      if (p < 1) raf = requestAnimationFrame(tick);
+      else from.current = value;
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value]);
+  return <>{shown.toLocaleString()}</>;
+}
+
 export function Stat({ label, value, hint }: { label: string; value: React.ReactNode; hint?: React.ReactNode }) {
   return (
-    <div className="rounded-lg border bg-card p-4">
+    <div className="okf-lift rounded-lg border bg-card p-4">
       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className="mt-1 text-2xl font-semibold tabular-nums">{value}</p>
+      <p className="mt-1 text-2xl font-semibold tabular-nums">{typeof value === 'number' ? <AnimatedNumber value={value} /> : value}</p>
       {hint ? <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p> : null}
     </div>
   );

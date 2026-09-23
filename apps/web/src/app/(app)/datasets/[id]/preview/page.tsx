@@ -147,12 +147,29 @@ export default function PreviewPage() {
           <Table data-testid="concept-table">
             <THead>
               <TR>
-                <TH>Concept</TH>
-                <TH>Type</TH>
-                <TH>Trust</TH>
-                <TH>Status</TH>
-                <TH>Links</TH>
-                <TH>Schema cols</TH>
+                {(
+                  [
+                    ['Concept', 'title'],
+                    ['Type', 'type'],
+                    ['Trust', null],
+                    ['Status', null],
+                    ['Links', 'links'],
+                    ['Schema cols', null],
+                  ] as const
+                ).map(([label, key]) => (
+                  <TH key={label} aria-sort={key && sort === key ? 'ascending' : undefined}>
+                    {key ? (
+                      <button onClick={() => (setSort(sort === key ? 'concept_id' : key), setPage(1))} className={`inline-flex items-center gap-1 uppercase hover:text-foreground ${sort === key ? 'text-foreground' : ''}`}>
+                        {label}
+                        <span aria-hidden className={sort === key ? 'opacity-100' : 'opacity-30'}>
+                          {sort === key ? '▲' : '↕'}
+                        </span>
+                      </button>
+                    ) : (
+                      label
+                    )}
+                  </TH>
+                ))}
               </TR>
             </THead>
             <TBody>

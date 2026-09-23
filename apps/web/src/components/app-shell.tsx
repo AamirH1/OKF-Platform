@@ -4,6 +4,8 @@ import { Building2, ChevronsUpDown, Database, KeyRound, LayoutDashboard, Library
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
+import { CommandPaletteProvider, useCommandPalette } from '@/components/command-palette';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/overlays';
 import { useCurrentOrg, useMe, useSignOut } from '@/lib/session';
@@ -78,7 +80,27 @@ function OrgSwitcher() {
   );
 }
 
+function SearchButton() {
+  const open = useCommandPalette();
+  return (
+    <button onClick={() => open(true)} className="mb-3 flex w-full items-center gap-2 rounded-md border bg-card px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground">
+      <Search className="size-4" />
+      <span className="flex-1 text-left">Search…</span>
+      <kbd className="rounded border bg-muted px-1.5 font-mono text-[10px]">⌘K</kbd>
+    </button>
+  );
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
+  return (
+    <CommandPaletteProvider>
+      <Shell>{children}</Shell>
+    </CommandPaletteProvider>
+  );
+}
+
+function Shell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const { data: me } = useMe();
   const signOut = useSignOut();
   const signedIn = !!me;
@@ -94,6 +116,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <OrgSwitcher />
           </div>
         ) : null}
+        <div className="px-3">
+          <SearchButton />
+        </div>
         <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3" aria-label="Main">
           {NAV.filter((n) => signedIn || !n.auth).map((n) => (
             <NavLink key={n.href} {...n} />
@@ -107,7 +132,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </>
           ) : null}
         </nav>
-        <div className="border-t p-3">
+        <div className="space-y-3 border-t p-3">
+          <ThemeToggle />
           {me ? (
             <div className="flex items-center gap-2">
               <span className="grid size-8 place-items-center rounded-full bg-muted text-xs font-semibold">{me.user.name.slice(0, 2).toUpperCase()}</span>
@@ -144,7 +170,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             ))}
           </nav>
         </header>
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 md:px-8 md:py-8">{children}</main>
+        <main key={pathname.split('/').slice(0, 3).join('/')} className="okf-enter mx-auto w-full max-w-7xl flex-1 px-4 py-6 md:px-8 md:py-8">
+          {children}
+        </main>
       </div>
     </div>
   );

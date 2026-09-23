@@ -79,7 +79,7 @@ export function Badge({ tone = 'default', className, ...props }: React.HTMLAttri
 }
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded-md bg-muted', className)} />;
+  return <div className={cn('okf-shimmer rounded-md', className)} />;
 }
 
 export function Progress({ value, className, label }: { value: number; className?: string; label?: string }) {

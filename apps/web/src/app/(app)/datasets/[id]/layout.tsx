@@ -175,12 +175,22 @@ function DatasetHeader() {
   );
 }
 
+/** Re-mount on tab change so each tab fades in. */
+function TabBody({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  return (
+    <div key={pathname} className="okf-enter">
+      {children}
+    </div>
+  );
+}
+
 export default function DatasetLayout({ children }: { children: React.ReactNode }) {
   return (
     <React.Suspense fallback={<LoadingRows />}>
       <DatasetProvider fallback={<LoadingRows />} error={(e, retry) => <ErrorState error={e} retry={retry} />}>
         <DatasetHeader />
-        {children}
+        <TabBody>{children}</TabBody>
       </DatasetProvider>
     </React.Suspense>
   );
