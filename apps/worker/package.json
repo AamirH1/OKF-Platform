@@ -12,6 +12,12 @@
     "build": "node ../../scripts/bundle.mjs src/main.ts dist/main.js"
   },
   "dependencies": {
+    "@okf/archive": "*",
+    "@okf/config": "*",
+    "@okf/core": "*",
+    "@okf/db": "*",
+    "@okf/query": "*",
+    "@okf/storage": "*",
     "pino": "^10.3.1",
     "prom-client": "^15.1.3"
   }
