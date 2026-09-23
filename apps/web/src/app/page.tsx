@@ -8,7 +8,7 @@ export default function Home() {
   const { data, isLoading } = useMe();
   const router = useRouter();
   React.useEffect(() => {
-    if (!isLoading) router.replace(data ? '/dashboard' : '/catalog');
+    if (!isLoading) router.replace(data ? '/dashboard' : '/how-it-works');
   }, [data, isLoading, router]);
   return null;
 }

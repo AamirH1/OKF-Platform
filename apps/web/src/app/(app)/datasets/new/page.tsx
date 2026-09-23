@@ -8,6 +8,7 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { PageHeader } from '@/components/common';
+import { Term } from '@/components/help';
 import { BundleUploader } from '@/components/upload';
 import { Button } from '@/components/ui/button';
 import { Alert, Card, CardContent, CardDescription, CardHeader, CardTitle, Field, Input, Select, Textarea } from '@/components/ui/primitives';
@@ -60,7 +61,17 @@ export default function NewDatasetPage() {
 
   return (
     <>
-      <PageHeader title="New dataset" description={org ? `A dataset is a versioned OKF bundle in ${org.name}.` : undefined} />
+      <PageHeader
+        title="New dataset"
+        description={
+          org ? (
+            <>
+              A <Term k="dataset">dataset</Term> holds every <Term k="version">version</Term> of an <Term k="okf">OKF</Term> <Term k="bundle">bundle</Term> in {org.name}. Give it
+              a name now; you&apos;ll upload the files on the next step.
+            </>
+          ) : undefined
+        }
+      />
       {!org ? <Alert tone="warning">Create or join an organization first.</Alert> : null}
       <Card className="max-w-2xl">
         <CardContent className="pt-5">

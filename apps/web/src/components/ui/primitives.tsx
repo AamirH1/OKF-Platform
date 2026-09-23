@@ -48,7 +48,7 @@ export function Field({ label, error, hint, htmlFor, children }: { label: string
 }
 
 export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('rounded-lg border bg-card text-card-foreground shadow-xs', className)} {...props} />;
+  return <div className={cn('rounded-2xl border bg-card text-card-foreground shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_-8px_rgba(0,0,0,0.08)]', className)} {...props} />;
 }
 export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn('flex flex-col gap-1 p-5 pb-3', className)} {...props} />;

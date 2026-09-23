@@ -9,7 +9,9 @@ import * as React from 'react';
 import { toast } from 'sonner';
 import { ErrorState, LoadingRows, StatusBadge, VisibilityBadge } from '@/components/common';
 import { DatasetProvider, useDataset, useVersions } from '@/components/dataset-context';
+import { TabTip } from '@/components/help';
 import { BundleUploader } from '@/components/upload';
+import { TAB_TIPS, type TabKey } from '@/lib/help';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/overlays';
 import { Alert, Badge, Select } from '@/components/ui/primitives';
@@ -64,7 +66,7 @@ function DatasetHeader() {
 
   return (
     <div className="mb-6 space-y-4">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+      <div className="okf-hero flex flex-col gap-3 rounded-2xl border p-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <p className="text-sm text-muted-foreground">
             {shared ? 'Shared with you · ' : null}
@@ -155,7 +157,7 @@ function DatasetHeader() {
         </div>
       </div>
       {d.archivedAt ? <Alert tone="warning">This dataset is archived and read-only.</Alert> : null}
-      <nav className="-mx-1 flex gap-1 overflow-x-auto border-b px-1" aria-label="Dataset sections">
+      <nav className="flex w-fit max-w-full gap-1 overflow-x-auto rounded-xl border bg-muted/50 p-1" aria-label="Dataset sections">
         {TABS.filter((t) => !('perm' in t) || can(t.perm)).map((t) => {
           const href = t.slug ? `${base}/${t.slug}` : base;
           const active = t.slug ? pathname.startsWith(href) : pathname === base;
@@ -164,7 +166,7 @@ function DatasetHeader() {
               key={t.slug}
               href={`${href}${versionQs}`}
               aria-current={active ? 'page' : undefined}
-              className={cn('-mb-px border-b-2 px-3 py-2 text-sm whitespace-nowrap', active ? 'border-primary font-medium text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground')}
+              className={cn('rounded-lg px-3 py-1.5 text-sm whitespace-nowrap transition-all', active ? 'bg-card font-medium text-foreground shadow-sm ring-1 ring-border' : 'text-muted-foreground hover:bg-card/60 hover:text-foreground')}
             >
               {t.label}
             </Link>
@@ -178,8 +180,10 @@ function DatasetHeader() {
 /** Re-mount on tab change so each tab fades in. */
 function TabBody({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const tab = (pathname.split('/')[3] ?? 'overview') as TabKey;
   return (
     <div key={pathname} className="okf-enter">
+      {tab in TAB_TIPS ? <TabTip tab={tab} /> : null}
       {children}
     </div>
   );

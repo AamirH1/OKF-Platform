@@ -23,7 +23,8 @@
   --warning: oklch(0.68 0.15 70);
   --info: oklch(0.58 0.12 240);
   --sidebar: oklch(0.975 0.004 255);
-  --radius: 0.5rem;
+  --radius: 0.75rem;
+  --brand-2: oklch(0.6 0.2 300);
 }
 
 /* Dark palette: follows the OS unless the user picked a theme (data-theme on <html>). */
@@ -115,7 +116,8 @@
   body {
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-sans);
+    font-family: var(--font-geist-sans), var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01';
     -webkit-font-smoothing: antialiased;
   }
   :focus-visible {
@@ -143,6 +145,23 @@
 .prose-okf th, .prose-okf td { border: 1px solid var(--border); padding: 0.35rem 0.6rem; text-align: left; vertical-align: top; }
 .prose-okf th { background: var(--muted); font-weight: 600; }
 .prose-okf blockquote { border-left: 3px solid var(--border); padding-left: 0.8rem; color: var(--muted-foreground); }
+
+/* ── Brand surfaces ─────────────────────────────────────────────────────────── */
+.okf-hero {
+  background:
+    radial-gradient(60% 80% at 0% 0%, color-mix(in oklch, var(--primary) 18%, transparent), transparent 70%),
+    radial-gradient(50% 70% at 100% 0%, color-mix(in oklch, var(--brand-2) 16%, transparent), transparent 70%),
+    var(--card);
+}
+.okf-gradient-text {
+  background: linear-gradient(90deg, var(--primary), var(--brand-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.okf-brand {
+  background: linear-gradient(135deg, var(--primary), var(--brand-2));
+}
 
 /* ── Motion & feedback (disabled for users who prefer reduced motion) ───────── */
 @keyframes okf-fade-up {

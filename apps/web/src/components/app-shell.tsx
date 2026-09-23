@@ -1,6 +1,6 @@
 'use client';
 
-import { Building2, ChevronsUpDown, Database, KeyRound, LayoutDashboard, LibraryBig, LogOut, ScrollText, Search, Settings, Users } from 'lucide-react';
+import { Building2, ChevronRight, ChevronsUpDown, HelpCircle, Database, KeyRound, LayoutDashboard, LibraryBig, LogOut, ScrollText, Search, Settings, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
@@ -17,7 +17,41 @@ const NAV = [
   { href: '/catalog', label: 'Catalog', icon: LibraryBig, auth: false },
   { href: '/search', label: 'Search', icon: Search, auth: false },
   { href: '/organizations', label: 'Organizations', icon: Building2, auth: true },
+  { href: '/how-it-works', label: 'How it works', icon: HelpCircle, auth: false },
 ];
+
+const CRUMB_LABELS: Record<string, string> = {
+  dashboard: 'Dashboard', datasets: 'Datasets', catalog: 'Catalog', search: 'Search', organizations: 'Organizations',
+  settings: 'Settings', profile: 'Profile', members: 'Members', 'api-keys': 'API keys', 'audit-log': 'Audit log',
+  new: 'New', preview: 'Data preview', schema: 'Schema', metadata: 'Metadata', validation: 'Validation', versions: 'Versions',
+  compare: 'Compare', query: 'Query', activity: 'Activity', sharing: 'Sharing', concepts: 'Concepts', 'how-it-works': 'How it works',
+};
+
+/** Breadcrumbs from the URL; IDs are shown as a short "…" item. */
+function Breadcrumbs() {
+  const parts = usePathname().split('/').filter(Boolean);
+  return (
+    <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground">
+      {parts.map((p, i) => {
+        const href = `/${parts.slice(0, i + 1).join('/')}`;
+        const label = CRUMB_LABELS[p] ?? (/^[0-9a-f-]{36}$/.test(p) ? 'Details' : decodeURIComponent(p));
+        const last = i === parts.length - 1;
+        return (
+          <React.Fragment key={href}>
+            {i > 0 ? <ChevronRight className="size-3.5 shrink-0 opacity-50" /> : null}
+            {last ? (
+              <span className="truncate font-medium text-foreground">{label}</span>
+            ) : (
+              <Link href={href} className="truncate hover:text-foreground">
+                {label}
+              </Link>
+            )}
+          </React.Fragment>
+        );
+      })}
+    </nav>
+  );
+}
 const SETTINGS = [
   { href: '/settings/profile', label: 'Profile', icon: Settings },
   { href: '/settings/members', label: 'Members', icon: Users },
@@ -80,12 +114,12 @@ function OrgSwitcher() {
   );
 }
 
-function SearchButton() {
+function SearchButtonCompact() {
   const open = useCommandPalette();
   return (
-    <button onClick={() => open(true)} className="mb-3 flex w-full items-center gap-2 rounded-md border bg-card px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground">
-      <Search className="size-4" />
-      <span className="flex-1 text-left">Search…</span>
+    <button onClick={() => open(true)} className="flex h-8 w-64 items-center gap-2 rounded-lg border bg-card/80 px-2.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground">
+      <Search className="size-3.5" />
+      <span className="flex-1 text-left">Search or jump to…</span>
       <kbd className="rounded border bg-muted px-1.5 font-mono text-[10px]">⌘K</kbd>
     </button>
   );
@@ -108,7 +142,7 @@ function Shell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-dvh">
       <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r bg-sidebar md:flex">
         <Link href={signedIn ? '/dashboard' : '/catalog'} className="flex items-center gap-2 px-4 py-4">
-          <span className="grid size-7 place-items-center rounded-md bg-primary text-sm font-bold text-primary-foreground">K</span>
+          <span className="okf-brand grid size-8 place-items-center rounded-lg text-sm font-bold text-white shadow-md">K</span>
           <span className="font-semibold tracking-tight">OKF Platform</span>
         </Link>
         {signedIn ? (
@@ -116,9 +150,6 @@ function Shell({ children }: { children: React.ReactNode }) {
             <OrgSwitcher />
           </div>
         ) : null}
-        <div className="px-3">
-          <SearchButton />
-        </div>
         <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3" aria-label="Main">
           {NAV.filter((n) => signedIn || !n.auth).map((n) => (
             <NavLink key={n.href} {...n} />
@@ -170,6 +201,12 @@ function Shell({ children }: { children: React.ReactNode }) {
             ))}
           </nav>
         </header>
+        <div className="sticky top-0 z-30 hidden h-14 items-center gap-3 border-b bg-background/75 px-8 backdrop-blur-md md:flex">
+          <Breadcrumbs />
+          <div className="ml-auto flex items-center gap-2">
+            <SearchButtonCompact />
+          </div>
+        </div>
         <main key={pathname.split('/').slice(0, 3).join('/')} className="okf-enter mx-auto w-full max-w-7xl flex-1 px-4 py-6 md:px-8 md:py-8">
           {children}
         </main>

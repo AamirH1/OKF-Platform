@@ -6,6 +6,7 @@ import { AlertCircle, AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-
 import * as React from 'react';
 import { ErrorState, LoadingRows, Pagination, Stat } from '@/components/common';
 import { useDataset } from '@/components/dataset-context';
+import { Term } from '@/components/help';
 import { Alert, Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Select, Table, TBody, TD, TH, THead, TR } from '@/components/ui/primitives';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -41,7 +42,17 @@ export default function ValidationPage() {
         <div className={cn('flex items-start gap-3 rounded-lg border p-4', r.valid ? 'border-success/40 bg-success/8' : 'border-destructive/40 bg-destructive/8')} data-testid="validation-verdict">
           {r.valid ? <CheckCircle2 className="mt-0.5 size-5 text-success" /> : <AlertCircle className="mt-0.5 size-5 text-destructive" />}
           <div>
-            <p className="font-medium">{r.valid ? `v${r.version} is OKF v${r.specVersion} conformant` : `v${r.version} is not OKF-conformant`}</p>
+            <p className="font-medium">
+              {r.valid ? (
+                <>
+                  v{r.version} is OKF v{r.specVersion} <Term k="conformant">conformant</Term> — ready to publish
+                </>
+              ) : (
+                <>
+                  v{r.version} is not OKF-<Term k="conformant">conformant</Term> yet
+                </>
+              )}
+            </p>
             <p className="text-sm text-muted-foreground">
               {r.valid
                 ? 'No structural errors. Quality findings below never affect conformance.'
